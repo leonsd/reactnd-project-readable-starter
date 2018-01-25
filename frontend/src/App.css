@@ -1,3 +1,5 @@
+@import '~antd/dist/antd.css';
+
 .App {
   text-align: center;
 }
@@ -20,4 +22,19 @@
 
 .App-intro {
   font-size: large;
+}
+
+.ant-layout-header {
+  background-color: #474b4e;
+}
+
+.logo {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 650;
+}
+
+.logo a {
+  color: #fff;
+  text-decoration: none;
 }
