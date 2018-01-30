@@ -13,7 +13,7 @@ export const getCategories = () =>
     .then(data => data.categories)
 
 export const addPost = (post) =>
-  fetch(`${api}/post`, {
+  fetch(`${api}/posts`, {
     method: 'POST',
     headers: {
       ...headers,

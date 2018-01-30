@@ -4,9 +4,9 @@ import { capitalize } from '../utils/helpers'
 import { Switch, Route, Link } from 'react-router-dom'
 import PostsList from './PostsList'
 import * as Api from '../utils/Api'
-import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+import { Layout, Menu, Icon } from 'antd'
+const { SubMenu } = Menu
+const { Header, Content, Footer, Sider } = Layout
 
 class App extends Component {
   state = {
@@ -29,19 +29,16 @@ class App extends Component {
             <Link to='/'>Readable</Link>
           </div>
         </Header>
-        <Content style={{ padding: '0 50px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-          </Breadcrumb>
+        <Content style={{ padding: '0 50px', margin: '16px 0' }}>
           <Layout style={{ padding: '24px 0', background: '#fff' }}>
             <Sider width={200} style={{ background: '#fff' }}>
               <Menu
                 mode="inline"
                 defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
+                defaultOpenKeys={['cat']}
                 style={{ height: '100%' }}
               >
-                <SubMenu key="sub1" title={<span><Icon type="tags-o" />Categories</span>}>
+                <SubMenu key="cat" title={<span><Icon type="tags-o" />Categories</span>}>
                   {categories.map(category => (
                     <Menu.Item key={category.name}>
                       <Link to={`/posts/${category.path}`}>{capitalize(category.name)}</Link>
