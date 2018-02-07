@@ -9,16 +9,7 @@ const Option = Select.Option
 
 class PostsList extends Component {
   state = {
-    posts: [],
     modalAddPost: false
-  }
-
-  componentDidMount() {
-    const { category } = this.props
-
-    Api.getPosts(category).then(posts => {
-      this.setState({ posts })
-    })
   }
 
   showModal = () => {
@@ -40,6 +31,7 @@ class PostsList extends Component {
   }
 
   addPost = () => {
+    const { add } = this.props
     const id = this.generateId()
     const title = document.querySelector('#title').value
     const author = document.querySelector('#author').value
@@ -55,10 +47,11 @@ class PostsList extends Component {
     }
 
     Api.addPost(post).then(res => {
-      this.setState(state => (
-        state.posts = state.posts.concat([ post ])
-      ))
+      post.voteScore = res.voteScore
+      post.deleted = res.deleted
+      post.commentCount = res.commentCount
 
+      add(post)
       this.setState({ modalAddPost: false })
     })
   }
@@ -73,7 +66,8 @@ class PostsList extends Component {
   }
 
   render() {
-    const { posts } = this.state
+    console.log(this.props)
+    const { posts } = this.props
     const IconText = ({ type, text }) => (
       <span>
         <Icon type={type} style={{ marginRight: 8, marginLeft: 8 }} />
@@ -137,17 +131,19 @@ class PostsList extends Component {
   }
 }
 
-function mapStateToProps({ post }) {
-  return {
-    posts: []
+function mapStateToProps(state, ownProps) {
+  const posts = ownProps.getPostsByCategory(ownProps.category)
+  
+  return { 
+    posts: posts
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    addPost: (data) => dispatch(addPost(data)),
-    editPost: (data) => dispatch(editPost(data)),
-    removePost: (data) => dispatch(removePost(data))
+    add: (data) => dispatch(addPost(data)),
+    edit: (data) => dispatch(editPost(data)),
+    remove: (data) => dispatch(removePost(data))
   }
 }
 

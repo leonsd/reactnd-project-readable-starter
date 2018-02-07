@@ -19,6 +19,17 @@ class App extends Component {
     })
   }
 
+  getPostsByCategory = (category) => {
+    return new Promise(function(resolve, reject) {
+      Api.getPostsByCategory(category).then(data => {
+        if (data) {
+          resolve(data); return;
+        }
+        reject()
+      })
+    })
+  }
+
   render() {
     const { categories } = this.state
 
@@ -51,7 +62,10 @@ class App extends Component {
               <Switch>
                 {categories.map(category => (
                   <Route exact path={`/posts/${category.path}`} key={category.name} render={() => (
-                    <PostsList category={category.name} />
+                    <PostsList 
+                      category={category.name}
+                      getPostsByCategory={this.getPostsByCategory}
+                    />
                   )} />
                 ))}
               </Switch>

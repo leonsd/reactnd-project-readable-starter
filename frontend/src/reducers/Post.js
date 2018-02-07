@@ -5,30 +5,28 @@ const initialState = {
 }
 
 function post(state = initialState, action) {
-  const { id, title, body, author, category } = action
+  const { post, id, title, body } = action
 
   switch(action.type) {
     case ADD_POST:
-      return {
-        ...state.concat({
-          [id]: id,
-          [title]: title,
-          [body]: body,
-          [author]: category,
-        })
-      }
+      return Object.assign({}, state, {
+        posts: [
+          ...state.posts,
+          post,
+        ]
+      })
     case EDIT_POST:
-      return {
-        ...state.find(post => (
-          post.id === id
-          ? (post.title = title, post.body = body)
+      return (
+        state.find(p => (
+          p.id === id
+          ? (p.title = title, p.body = body)
           : false
         ))
-      }
+      )
     case REMOVE_POST:
-      return {
-        ...state.filter(post => post.id !== id)
-      }
+      return (
+        state.filter(post => post.id !== id)
+      )
     default:
       return state
   }

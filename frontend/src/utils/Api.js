@@ -22,7 +22,7 @@ export const addPost = (post) =>
     body: JSON.stringify({ post })
   }).then(res => res.json())
 
-export const getPosts = (category) =>
+export const getPostsByCategory = (category) =>
   fetch(`${api}/${category}/posts`, { headers })
     .then(res => res.json())
 
