@@ -1,59 +1,111 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { addPost, editPost, removePost } from '../actions/Post'
-import { Row, Col, Button, Divider, List, Avatar, Icon, Modal, Input, Select } from 'antd'
+import { getPosts, addPost, editPost, removePost } from '../actions/Post'
+import { Row, Col, Form, Button, Divider, List, Avatar, Icon, Modal, Input, Select } from 'antd'
 import * as Api from '../utils/Api'
 const { TextArea } = Input
 const InputGroup = Input.Group
+const FormItem = Form.Item
 const Option = Select.Option
+
+const CollectionCreateForm = Form.create()(
+  (props) => {
+    const { visible, onCancel, onCreate, form } = props
+    const { getFieldDecorator } = form
+    return (
+      <Modal
+        visible={visible}
+        title="Create a new post"
+        okText="Save"
+        onCancel={onCancel}
+        onOk={onCreate}
+      >
+        <Form layout="vertical">
+          <FormItem label="Title">
+            {getFieldDecorator('title', {
+              rules: [{ required: true, message: 'Please input the title of post!' }],
+            })(
+              <Input />
+            )}
+          </FormItem>
+          <InputGroup>
+            <Col span={12}>
+              <FormItem label="Author">
+                {getFieldDecorator('author')(<Input />)}
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem label="Category">
+                {getFieldDecorator('category', {
+                  rules: [{ required: true, message: 'Please input the category of post!' }],
+                })(
+                  <Select style={{ width: '100%' }}>
+                    <Option value="react">React</Option>
+                    <Option value="redux">Redux</Option>
+                    <Option value="udacity">Udacity</Option>
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+          </InputGroup>
+          <FormItem label="Body">
+            {getFieldDecorator('body')(<TextArea rows={4} />)}
+          </FormItem>
+        </Form>
+      </Modal>
+    );
+  }
+)
 
 class PostsList extends Component {
   state = {
-    modalAddPost: false
+    visible: false
   }
 
-  showModal = () => {
-    this.setState({
-      modalAddPost: true,
-    });
-  }
-
-  handleOk = (e) => {
-    console.log(e)
-    this.addPost()
-  }
-
-  handleCancel = (e) => {
-    console.log(e)
-    this.setState({
-      modalAddPost: false,
-    });
-  }
-
-  addPost = () => {
-    const { add } = this.props
-    const id = this.generateId()
-    const title = document.querySelector('#title').value
-    const author = document.querySelector('#author').value
-    // const category = document.querySelector('#category').value
-    const body = document.querySelector('#body').value
-    const post = {
-      id: id,
-      title: title,
-      author: author,
-      timestamp: Date.now(),
-      category: 'react',
-      body: body
-    }
-
-    Api.addPost(post).then(res => {
-      post.voteScore = res.voteScore
-      post.deleted = res.deleted
-      post.commentCount = res.commentCount
-
-      add(post)
-      this.setState({ modalAddPost: false })
+  componentDidMount = () => {
+    const { category, getPosts, getPostsByCategory } = this.props
+    getPostsByCategory(category).then(posts => {
+      getPosts(posts)
     })
+  }
+
+  showModal = (post = null) => {
+    this.setState({ visible: true })
+    console.log(post)
+  }
+
+  handleCancel = () => {
+    this.setState({ visible: false })
+  }
+
+  handleCreate = () => {
+    const { addPost } = this.props
+    const form = this.form
+
+    form.validateFields((err, values) => {
+      if (err) {
+        return
+      }
+
+      const post = {
+        id: this.generateId(),
+        title: values.title,
+        author: values.author,
+        timestamp: Date.now(),
+        category: values.category,
+        body: values.body
+      }
+
+      Api.addPost(post).then(res => {
+        addPost(res)
+        form.resetFields()
+        this.setState({ visible: false })
+      })
+    });
+  }
+
+  saveFormRef = (form) => {
+    this.form = form
   }
 
   generateId = () => {
@@ -66,8 +118,7 @@ class PostsList extends Component {
   }
 
   render() {
-    console.log(this.props)
-    const { posts } = this.props
+    const { posts } = this.props.posts
     const IconText = ({ type, text }) => (
       <span>
         <Icon type={type} style={{ marginRight: 8, marginLeft: 8 }} />
@@ -78,7 +129,13 @@ class PostsList extends Component {
     return(
       <div>
         <Row>
-          <Col span={24}><Button type="primary" onClick={this.showModal}>Add Post</Button></Col>
+          <Col span={24}>
+            <Button 
+              type="primary" 
+              onClick={this.showModal}
+            >Add Post
+            </Button>
+          </Col>
         </Row>
         <Divider />
         <List
@@ -88,52 +145,37 @@ class PostsList extends Component {
           renderItem={post => (
             <List.Item
               key={post.id}
-              actions={[<IconText type="like-o" text={post.voteScore} />, <IconText type="message" text="2" />]}
+              actions={[<IconText type="like-o" text={post.voteScore} />, <IconText type="message" text={post.commentCount} />]}
               extra={<Avatar icon='user' />}
             >
               <List.Item.Meta
-                title={[post.title, <IconText type="edit" key={post.id} />]}
+                title={
+                  [post.title,
+                  <a 
+                    key={post.id}
+                    onClick={() => {this.showModal(post)}}>
+                    <IconText type="edit" />
+                  </a>]
+                }
                 description={`Author: ${post.author}`}
               />
               {post.body}
             </List.Item>
           )}
         />
-        <Modal
-          title="Add Post"
-          visible={this.state.modalAddPost}
-          onOk={this.handleOk}
+        <CollectionCreateForm
+          ref={this.saveFormRef}
+          visible={this.state.visible}
           onCancel={this.handleCancel}
-        >
-          <Row>
-            <Col span={24}><Input id='title' placeholder="Title" /></Col>
-          </Row>
-          <Row>
-            <InputGroup>
-              <Col span={12}>
-                <Input id='author' placeholder="Author" />
-              </Col>
-              <Col span={12}>
-                <Select defaultValue={this.props.category} id='category' style={{ width: '100%' }}>
-                  <Option value="react">React</Option>
-                  <Option value="redux">Redux</Option>
-                  <Option value="udacity">Udacity</Option>
-                </Select>
-              </Col>
-            </InputGroup>
-          </Row>
-          <Row>
-            <Col span={24}><TextArea id='body' rows={4} placeholder="Body" /></Col>
-          </Row>
-        </Modal>
+          onCreate={this.handleCreate}
+        />
       </div>
     )
   }
 }
 
 function mapStateToProps(state, ownProps) {
-  const posts = ownProps.getPostsByCategory(ownProps.category)
-  
+  const posts = state.post
   return { 
     posts: posts
   }
@@ -141,9 +183,10 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    add: (data) => dispatch(addPost(data)),
-    edit: (data) => dispatch(editPost(data)),
-    remove: (data) => dispatch(removePost(data))
+    getPosts: (data) => dispatch(getPosts(data)),
+    addPost: (data) => dispatch(addPost(data)),
+    editPost: (data) => dispatch(editPost(data)),
+    removePost: (data) => dispatch(removePost(data))
   }
 }
 

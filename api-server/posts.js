@@ -24,50 +24,6 @@ const defaultData = {
     voteScore: -5,
     deleted: false,
     commentCount: 0
-  },
-  "8xf0y6ziyjabvozdd253ndb": {
-    id: '8xf0y6ziyjabvozdd253ndb',
-    timestamp: 1467166872634,
-    title: 'Udacity is the best place to learn React',
-    body: 'Everyone says so after all.',
-    author: 'thingtwo',
-    category: 'redux',
-    voteScore: 6,
-    deleted: false,
-    commentCount: 2
-  },
-  "6ni6ok3ym7mf1p33lnezb": {
-    id: '6ni6ok3ym7mf1p33lnezb',
-    timestamp: 1468479767190,
-    title: 'Learn Redux in 10 minutes!',
-    body: 'Just kidding. It takes more than 10 minutes to learn technology.',
-    author: 'thingone',
-    category: 'react',
-    voteScore: -5,
-    deleted: false,
-    commentCount: 0
-  },
-  "8xf0y6ziyjabvozdd253nda": {
-    id: '8xf0y6ziyjabvozdd253nda',
-    timestamp: 1467166872634,
-    title: 'Udacity is the best place to learn React',
-    body: 'Everyone says so after all.',
-    author: 'thingtwo',
-    category: 'react',
-    voteScore: 6,
-    deleted: false,
-    commentCount: 2
-  },
-  "6ni6ok3ym7mf1p33lneza": {
-    id: '6ni6ok3ym7mf1p33lneza',
-    timestamp: 1468479767190,
-    title: 'Learn Redux in 10 minutes!',
-    body: 'Just kidding. It takes more than 10 minutes to learn technology.',
-    author: 'thingone',
-    category: 'redux',
-    voteScore: -5,
-    deleted: false,
-    commentCount: 0
   }
 }
 

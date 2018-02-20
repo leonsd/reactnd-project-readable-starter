@@ -1,14 +1,21 @@
-import { ADD_POST, EDIT_POST, REMOVE_POST } from '../actions/Post'
+import { GET_POSTS, ADD_POST, EDIT_POST, REMOVE_POST } from '../actions/Post'
 
 const initialState = {
   posts: []
 }
 
 function post(state = initialState, action) {
-  const { post, id, title, body } = action
+  const { id, title, body } = action
 
   switch(action.type) {
+    case GET_POSTS:
+      const { posts } = action
+      return {
+        ...state,
+        posts: posts
+      }
     case ADD_POST:
+      const { post } = action
       return Object.assign({}, state, {
         posts: [
           ...state.posts,

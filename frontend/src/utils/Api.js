@@ -19,7 +19,7 @@ export const addPost = (post) =>
       ...headers,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ post })
+    body: JSON.stringify(post)
   }).then(res => res.json())
 
 export const getPostsByCategory = (category) =>
